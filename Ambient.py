@@ -1,7 +1,8 @@
 import numpy as np
+from size import size
 class Ambient():
     def __init__(self, size):
-        self.ambient = np.random.randint(0, 2, (10, 10), dtype=int)
+        self.ambient = np.random.randint(0, 2, (size, size), dtype=int)
 
     def clean(self, pos):
         if(self.ambient[pos[0], pos[1]] == 0):

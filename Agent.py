@@ -1,20 +1,33 @@
 import random
 from Ambient import Ambient
+from size import size
 class Agent():
     def __init__(self, choices, percepts, restrictions):
         self.choices = choices
         self.percepts = percepts
         self.restrictions = restrictions
         self.allChoices = []
-        self.pos = [random.randint(0, 9), random.randint(0, 9)]
+        self.pos = [random.randint(0, size-1), random.randint(0, size-1)]
         self.points = 0
         self.ambient = Ambient(10)
     def generateChoice(self):
         choice = None
         while(choice == None):
+            self.percepts = self.ambient.percepts(self.pos)
+            if(self.percepts.__contains__("dirty")):
+                choice = "asp"
+                break
             choice =  random.choice(self.choices)
             canDo = True
-            self.percepts = self.ambient.percepts(self.pos)
+            if(self.percepts.__contains__("clean") and choice == "asp"):
+                canDo = False
+            if(self.allChoices.__len__()>0):
+                previousChoice = self.allChoices[self.allChoices.__len__()-1][0]
+                if((previousChoice == "left" and choice == "right")
+                or (previousChoice == "right" and choice == "left")
+                or (previousChoice == "up" and choice == "down")
+                or (previousChoice == "down" and choice == "up")):
+                    canDo = False
             for percept in self.percepts:
                 if(self.restrictions.__contains__((choice, percept))):
                     canDo = False
