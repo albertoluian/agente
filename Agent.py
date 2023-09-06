@@ -9,7 +9,7 @@ class Agent():
         self.allChoices = []
         self.pos = [random.randint(0, size-1), random.randint(0, size-1)]
         self.points = 0
-        self.ambient = Ambient(10)
+        self.ambient = Ambient(size)
     def generateChoice(self):
         choice = None
         while(choice == None):
