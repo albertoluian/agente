@@ -7,13 +7,14 @@ class Agent():
         self.percepts = percepts
         self.restrictions = restrictions
         self.allChoices = []
-        self.pos = [random.randint(0, size-1), random.randint(0, size-1)]
+        self.pos = [0, 0]
+        self.size = [0, 0]
         self.points = 0
         self.ambient = Ambient(size)
     def generateChoice(self):
         choice = None
         while(choice == None):
-            self.percepts = self.ambient.percepts(self.pos)
+            self.percepts = self.ambient.percepts()
             if(self.percepts.__contains__("dirty")):
                 choice = "asp"
                 break
@@ -34,16 +35,25 @@ class Agent():
                     choice = None
                 if(choice == "noOp" and not self.ambient.cleaned()):
                     choice = None
+        if(choice != "noOp" and choice != "asp"):
+            if(choice == "left"): self.pos[1] -= 1
+            elif(choice == "right"): self.pos[1] += 1
+            elif(choice == "up"): self.pos[0] -= 1
+            elif(choice == "down"): self.pos[0] += 1
+            if(self.pos[0]<0):
+                    self.pos[0] = 0
+                    self.size[0] +=1
+            if(self.pos[1]<0):
+                    self.pos[1] = 0
+                    self.size[1] +=1
+            if(self.pos[0]>self.size[0]):
+                    self.size[0] = self.pos[0]
+            if(self.pos[1]>self.size[1]):
+                    self.size[1] = self.pos[1]
         return self.action(choice)
 
     def action(self, choice):
-        if(choice == "left"): self.pos[1] -= 1
-        elif(choice == "right"): self.pos[1] += 1
-        elif(choice == "up"): self.pos[0] -= 1
-        elif(choice == "down"): self.pos[0] += 1
-        elif(choice == "asp"): 
-            cleaned = self.ambient.clean(self.pos)
-            if(cleaned): self.points += 2
+        self.points+=self.ambient.action(choice)
         self.allChoices.append((choice, self.pos))
         self.points -= 1
         if(self.ambient.cleaned()):
